@@ -19,7 +19,7 @@ class EventController extends Controller
     public function storeEvents(Request $request)
     {
         $result = $this->eventService->createEvent($request);
-        
+
         return response()->json($result['message'], $result['status']);
     }
 
@@ -54,5 +54,11 @@ class EventController extends Controller
         } else {
             return response()->json(["events" => $events]);
         }
+    }
+    public function showLocations()
+    {
+        $location = $this->eventService->getAllLocation();
+
+        return response()->json(["location" => $location]);
     }
 }

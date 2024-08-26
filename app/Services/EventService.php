@@ -123,6 +123,11 @@ class EventService
             ->take($pageSize)
             ->get();
     }
+    public function getAllLocation()
+    {
+        return DB::table('regions')->value("regions")
+            ->get();
+    }
 }
 
 
