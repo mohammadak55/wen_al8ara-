@@ -58,7 +58,6 @@ class EventController extends Controller
     public function showLocations()
     {
         $location = $this->eventService->getAllLocation();
-
         return response()->json(["location" => $location]);
     }
 }
