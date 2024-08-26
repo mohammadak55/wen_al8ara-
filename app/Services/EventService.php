@@ -89,7 +89,8 @@ class EventService
         $offset = ($page - 1) * $pageSize;
         return DB::table('events')
             ->join('regions', 'events.Region_id', '=', 'regions.id')
-            ->select("events.id as id",'events.created_at as time', "events.event_type as event_type", 'regions.regions')
+            ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id')
+            ->select("events.id as id",'events.created_at as time', "events.event_type as event_type", 'regions.regions' , "general_regions.general_regions as general_location")
             ->orderBy('time', 'desc')
             ->skip($offset)
             ->take($pageSize)
@@ -125,8 +126,7 @@ class EventService
     }
     public function getAllLocation()
     {
-        return DB::table('regions')->value("regions")
-            ->get();
+        return DB::table('regions')->select("regions.regions")->get();
     }
 }
 
