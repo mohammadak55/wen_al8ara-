@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\DB;
 
 class EventService
@@ -27,9 +28,15 @@ class EventService
             "user_id" => $user->id,
             'created_at' => now(),
         ]);
-
+        $time = now()->format('H:i:s');
+        $notificationData = [
+            'title' => 'New event Posted',
+            'body' => "حدث الآن في الساعة {$time} $request->event_type , منطقة : {$request->regions}",
+            'topic' => 'news',
+        ];
+        app(NotificationController::class)->sendNotificationToTopic($notificationData);
         if ($event) {
-            return ["message" => "Event created successfully", "status" => 200];
+            return ["message" => $notificationData["body"] , "status" => 200];
         } else {
             return ["message" => "Event creation failed", "status" => 401];
         }
