@@ -16,16 +16,29 @@ class SetterEventService
                 "regions" => "required"
             ],
         );
-
         $location = DB::table("regions")->where("regions", $request->regions)->value('id');
         $check = DB::table("regions")->where("regions", $request->regions)->first();
         if (!$check) {
             return ["message" => "Location not found", "status" => 404];
         }
+        $messages = [
+            "حرائق" => " أدت الغارات الإسرائيلية إلى اندلاع حرائق واسعة في منطقة $check->regions",
+            "اغتيال" => "نفذت القوات الإسرائيلية عملية إغتيال في منطقة $check->regions.",
+            "قصف مدفعي" => "تعرضت منطقة $check->regions لقصف مدفعي من قبل القوات الإسرائيلية.",
+            "غارة من مسيرة" => "نفذت طائرة مسيرة إسرائيلية غارة على موقع في $check->regions.",
+            "تحليق مسيرة" => "رصدت مسيرات إسرائيلية تحلق فوق المناطق الحدودية.",
+            "تحليق طيران حربي" => "شهدت سماء لبنان تحليقاً مكثفاً للطيران الحربي الإسرائيلي.",
+            "جدار صوت" => "أحدث الطيران الحربي الإسرائيلي جدار صوتي فوق سماء الجنوب اللبناني.",
+            "غارة من حربي" => "قام العدو الإسرائيلي بالإغارة على منطقة $check->regions."
+        ];
+
+        $message = $messages[$request->event_type] ;
+
         $event = DB::table('events')->insert([
             "event_type" => $request->event_type,
             "Region_id" => $location,
             "user_id" => $user->id,
+            "subtitle" => $message ,
             'created_at' => now(),
         ]);
         $time = now()->format('H:i:s');

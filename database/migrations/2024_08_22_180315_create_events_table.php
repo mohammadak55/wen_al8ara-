@@ -17,6 +17,7 @@ return new class extends Migration
                 "event_type",
                 ["غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"]
             );
+            $table->text("subtitle")->nullable();
             $table->foreignId("Region_id")->nullable()->constrained("regions");
             $table->foreignId("user_id")->nullable()->constrained("users");
             $table->timestamps();

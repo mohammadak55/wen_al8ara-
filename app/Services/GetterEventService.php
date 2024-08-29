@@ -12,7 +12,7 @@ class GetterEventService
         return DB::table('events')
             ->join('regions', 'events.Region_id', '=', 'regions.id')
             ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id')
-            ->select("events.id as id", 'events.created_at as time', "events.event_type as event_type", 'regions.regions', "general_regions.general_regions as general_location")
+            ->select("events.id as id" , "events.subtitle as Subtitile", 'events.created_at as time', "events.event_type as event_type", 'regions.regions', "general_regions.general_regions as general_location")
             ->orderBy('time', 'desc')
             ->skip($offset)
             ->take($pageSize)

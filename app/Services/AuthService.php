@@ -31,7 +31,7 @@ class AuthService
                 return response()->json(['message' => 'phone & Password does not match with our record.', 'status' => 401]);
             }
             $user = User::where('phone', $request->phone)->first();
-            return response()->json(['message' => 'User Logged In Successfully', 'token' => $user->createToken("API TOKEN")->plainTextToken ] ,200);
+            return response()->json(['message' => 'User Logged In Successfully', 'token' => substr($user->createToken("API TOKEN")->plainTextToken , 2) ] ,200);
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()] , 500);
         }
