@@ -2,34 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreEventsRequest;
-use App\Models\EventDetails;
-use App\Services\EventService;
+use App\Services\GetterEventService;
 use Illuminate\Http\Request;
 
-class EventController extends Controller
+class GetterEventController extends Controller
 {
     protected $eventService;
 
-    public function __construct(EventService $eventService)
+    public function __construct(GetterEventService $eventService)
     {
         $this->eventService = $eventService;
     }
-
-    public function storeEvents(Request $request)
-    {
-        $result = $this->eventService->createEvent($request);
-
-        return response()->json($result['message'], $result['status']);
-    }
-
-    public function updateEventDetail(Request $request, $id)
-    {
-        $result = $this->eventService->updateEventDetail($request, $id);
-
-        return response()->json($result['message'], $result['status']);
-    }
-
     public function showEvents(Request $request)
     {
         $page = $request->query('page', 1);
@@ -54,10 +37,5 @@ class EventController extends Controller
         } else {
             return response()->json(["events" => $events]);
         }
-    }
-    public function showLocations()
-    {
-        $location = $this->eventService->getAllLocation();
-        return response()->json(["location" => $location]);
     }
 }

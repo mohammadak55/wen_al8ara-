@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\GetterEventController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\SetterEventController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,20 +17,21 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+//getter
+Route::get('/ShowEventDetail', [GetterEventController::class, 'ShowEventDetail']);
+Route::get('/fillterEvent/{regions}', [GetterEventController::class, 'fillterEvent']);
+Route::get('/ShowEvents', [GetterEventController::class, 'ShowEvents']);
 
-Route::get('/ShowEventDetail', [EventController::class, 'ShowEventDetail']);
-Route::get('/fillterEvent/{regions}', [EventController::class, 'fillterEvent']);
-Route::get('/ShowEvents', [EventController::class, 'ShowEvents']);
-Route::get('/getLocations', [EventController::class, 'showLocations']);
+
+Route::get('/getLocations', [LocationController::class, 'showLocations']);
 Route::post('/sendNotificationToTopic', [NotificationController::class, 'sendNotificationToTopic']);
 
 
 Route::post('/register', [AuthController::class, 'createUser']);
 Route::post('/login', [AuthController::class, 'loginUser']);
 Route::middleware('auth:sanctum', 'throttle:60,1')->group(function () {
-    Route::post('/StoreEvents', [EventController::class, 'StoreEvents']);
-    Route::post('/UpdateEventDetail/{id}', [EventController::class, 'UpdateEventDetail']);
 
-    });
-
-
+    //setter
+    Route::post('/StoreEvents', [SetterEventController::class, 'StoreEvents']);
+    Route::post('/UpdateEventDetail/{id}', [SetterEventController::class, 'UpdateEventDetail']);
+});
