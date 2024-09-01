@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //getter
-Route::get('/ShowEventDetail', [GetterEventController::class, 'ShowEventDetail']);
-Route::get('/fillterEvent/{regions}', [GetterEventController::class, 'fillterEvent']);
+Route::get('/ShowEventDetail/{id}', [GetterEventController::class, 'ShowEventDetail']);
+Route::get('/fillterEvent/{regions?}/{eventType?}', [GetterEventController::class, 'fillterEvent']);
 Route::get('/ShowEvents', [GetterEventController::class, 'ShowEvents']);
 
 
