@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('event_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("event_id")->constrained("events");
+            $table->foreignId("event_id")->constrained("events")->cascadeOnDelete();
             $table->foreignId("ExactLocation_id")->constrained("regions");
             $table->longText("description")->nullable();
             $table->enum("HumanCasualties"  ,["لا توجد إصابات بشرية" , "إصابات طفيفة" , "إصابات خطيرة" , "وفيات" , "غير معروف"]);
