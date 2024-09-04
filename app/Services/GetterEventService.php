@@ -39,7 +39,8 @@ class GetterEventService
         $pageSize = 15;
         $offset = ($page - 1) * $pageSize;
         $query =  DB::table('events')
-            ->join('regions', 'events.Region_id', '=', 'regions.id');
+            ->join('regions', 'events.Region_id', '=', 'regions.id')
+            ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id');
         if(!empty($eventType))
         {
             $query->where("event_type" , $eventType);
@@ -49,7 +50,7 @@ class GetterEventService
             $query->where('regions.regions', $regions);
         }
 
-            return $query->select("events.id as id", 'events.created_at as time', "events.event_type as event_type", 'regions.regions')
+            return $query->select("events.id as id" , "events.subtitle as Subtitile", 'events.created_at as time', "events.event_type as event_type", 'regions.regions', "general_regions.general_regions as general_location")
             ->orderBy('time', 'desc')
             ->skip($offset)
             ->take($pageSize)
