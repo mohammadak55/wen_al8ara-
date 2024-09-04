@@ -8,6 +8,6 @@ class LocationService
 {
     public function getAllLocation()
     {
-        return DB::table('regions')->pluck("regions");
+        return DB::table('regions')->select("regions.regions as location")->get();
     }
 }

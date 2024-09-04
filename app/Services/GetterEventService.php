@@ -9,10 +9,20 @@ class GetterEventService
     {
         $pageSize = 15;
         $offset = ($page - 1) * $pageSize;
+
         return DB::table('events')
             ->join('regions', 'events.Region_id', '=', 'regions.id')
             ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id')
-            ->select("events.id as id" , "events.subtitle as Subtitile", 'events.created_at as time', "events.event_type as event_type", 'regions.regions', "general_regions.general_regions as general_location")
+            ->leftJoin('event_details', 'events.id', '=', 'event_details.event_id')
+            ->select(
+                'events.id as id',
+                'events.subtitle as Subtitile',
+                'events.created_at as time',
+                'events.event_type as event_type',
+                'regions.regions',
+                'general_regions.general_regions as general_location',
+                DB::raw('IF(event_details.id IS NOT NULL, true, false) as has_event_details')
+            )
             ->orderBy('time', 'desc')
             ->skip($offset)
             ->take($pageSize)

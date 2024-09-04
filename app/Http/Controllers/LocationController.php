@@ -14,7 +14,11 @@ class LocationController extends Controller
     }
     public function showLocations()
     {
-        $location = $this->LocationService->getAllLocation();
-        return response()->json(["location" => $location]);
+        $locations = $this->LocationService->getAllLocation();
+        $formattedLocations = [];
+        foreach ($locations as $index => $location) {
+            $formattedLocations["location" . $index] = $location->location;
+        }
+        return response()->json($formattedLocations);
     }
 }
