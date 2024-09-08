@@ -23,28 +23,28 @@ class SetterEventService
         }
         $messages = [
             "حرائق" => " أدت الغارات الإسرائيلية إلى اندلاع حرائق واسعة في منطقة $check->regions",
-            "اغتيال" => "نفذت القوات الإسرائيلية عملية إغتيال في منطقة $check->regions.",
-            "قصف مدفعي" => "تعرضت منطقة $check->regions لقصف مدفعي من قبل القوات الإسرائيلية.",
-            "غارة من مسيرة" => "نفذت طائرة مسيرة إسرائيلية غارة على موقع في $check->regions.",
-            "تحليق مسيرة" => "رصدت مسيرات إسرائيلية تحلق فوق المناطق الحدودية.",
-            "تحليق طيران حربي" => "شهدت سماء لبنان تحليقاً مكثفاً للطيران الحربي الإسرائيلي.",
-            "جدار صوت" => "أحدث الطيران الحربي الإسرائيلي جدار صوتي فوق سماء الجنوب اللبناني.",
-            "غارة من حربي" => "قام العدو الإسرائيلي بالإغارة على منطقة $check->regions."
+            "اغتيال" => "نفذت القوات الإسرائيلية عملية إغتيال في منطقة $check->regions",
+            "قصف مدفعي" => "تعرضت منطقة $check->regions لقصف مدفعي من قبل القوات الإسرائيلية",
+            "غارة من مسيرة" => "نفذت طائرة مسيرة إسرائيلية غارة على موقع في $check->regions",
+            "تحليق مسيرة" => "رصدت مسيرات إسرائيلية تحلق فوق المناطق الحدودية",
+            "تحليق طيران حربي" => "شهدت سماء لبنان تحليقاً مكثفاً للطيران الحربي الإسرائيلي",
+            "جدار صوت" => "أحدث الطيران الحربي الإسرائيلي جدار صوتي فوق سماء الجنوب اللبناني",
+            "غارة من حربي" => "قام العدو الإسرائيلي بالإغارة على منطقة $check->regions"
         ];
 
-        $message = $messages[$request->event_type] ;
+        $message = $messages[$request->event_type];
 
         $event = DB::table('events')->insert([
             "event_type" => $request->event_type,
             "Region_id" => $location,
             "user_id" => $user->id,
-            "subtitle" => $message ,
+            "subtitle" => $message,
             'created_at' => now(),
         ]);
-        $time = now()->format('H:i:s');
+        $time = now()->format('H:i');
         $notificationData = [
-            'title' => 'New event Posted',
-            'body' => "حدث الآن في الساعة {$time} $request->event_type , منطقة : {$request->regions}",
+            'title' => 'تم إضافة حدث جديد ',
+            'body' => "$message" . " عند ال " . $time,
             'topic' => 'news',
         ];
         app(NotificationController::class)->sendNotificationToTopic($notificationData);
@@ -59,44 +59,46 @@ class SetterEventService
     {
         $validated = $request->validate([
             "ExactLocation" => "required",
-            "description" => "sometimes",
-            "HumanCasualties" => "required|in:لا توجد إصابات بشرية,إصابات طفيفة,إصابات خطيرة,وفيات,غير معروف",
-            "DamageType" => "required|in:لا توجد أضرار,أضرار طفيفة بالمباني,أضرار جسيمة بالمباني,تدمير كامل,أضرار بالمركبات,حرائق,أضرار بالبنية التحتية,غير معروف",
+            "event_type" => "sometimes",
         ]);
         $location = DB::table("regions")->where("regions", $request->ExactLocation)->value('id');
         $check = DB::table("regions")->where("regions", $request->ExactLocation)->first();
         if (!$check) {
             return ["message" => "Location not found", "status" => 404];
         }
-        $check = DB::table("event_details")->where("event_id", $id)->first();
+        $messages = [
+            "حرائق" => " أدت الغارات الإسرائيلية إلى اندلاع حرائق واسعة في منطقة $check->regions",
+            "اغتيال" => "نفذت القوات الإسرائيلية عملية إغتيال في منطقة $check->regions",
+            "قصف مدفعي" => "تعرضت منطقة $check->regions لقصف مدفعي من قبل القوات الإسرائيلية",
+            "غارة من مسيرة" => "نفذت طائرة مسيرة إسرائيلية غارة على موقع في $check->regions",
+            "تحليق مسيرة" => "رصدت مسيرات إسرائيلية تحلق فوق المناطق الحدودية",
+            "تحليق طيران حربي" => "شهدت سماء لبنان تحليقاً مكثفاً للطيران الحربي الإسرائيلي",
+            "جدار صوت" => "أحدث الطيران الحربي الإسرائيلي جدار صوتي فوق سماء الجنوب اللبناني",
+            "غارة من حربي" => "قام العدو الإسرائيلي بالإغارة على منطقة $check->regions"
+        ];
+        $check = DB::table("events")->where("id", $id)->first();
         if ($check) {
-            $event = DB::table('event_details')->update([
-                "event_id" => $id,
-                "ExactLocation_id" => $location,
-                "description" => $request->description,
-                "HumanCasualties" => $request->HumanCasualties,
-                "DamageType" => $request->DamageType,
-                'created_at' => now(),
+            $message = $messages[$request->event_type];
+            DB::table("events")->where("id", $id)->update([
+                "event_type" => $request->event_type,
+                "Region_id" => $location,
+                "subtitle" => $message,
+                'updated_at' => now(),
             ]);
-        } else {
-            $event = DB::table('event_details')->insert([
-                "event_id" => $id,
-                "ExactLocation_id" => $location,
-                "description" => $request->description,
-                "HumanCasualties" => $request->HumanCasualties,
-                "DamageType" => $request->DamageType,
-                'created_at' => now(),
-            ]);
+
+
+            $time = now()->format('H:i');
+            $notificationData = [
+                'title' => 'تم التعديل على حدث ',
+                'body' => "تعديل"." : "."$message"."عند ال".$time,
+                'topic' => 'news',
+            ];
+            app(NotificationController::class)->sendNotificationToTopic($notificationData);
+        }else {
+            return ["message" => "Event not found", "status" => 404];
         }
 
-        DB::table("events")->where("id", $id)->update([
-            "Region_id" => $location,
-        ]);
+            return ["message" => "Event updated successfully ... ", "status" => 200];
 
-        if ($event) {
-            return ["message" => "Event posted successfully", "status" => 200];
-        } else {
-            return ["message" => "Event posting failed", "status" => 401];
-        }
     }
 }

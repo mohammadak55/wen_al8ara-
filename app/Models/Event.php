@@ -16,8 +16,4 @@ class Event extends Model
     {
         return $this->belongsTo(User::class , "user_id") ;
     }
-    public function details()
-    {
-        return $this->hasOne(EventDetails::class , "event_id") ;
-    }
 }

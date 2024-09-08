@@ -28,7 +28,7 @@ class AuthService
     {
         try {
             if (!Auth::attempt($request->only(['phone', 'password']))) {
-                return response()->json(['message' => 'phone & Password does not match with our record.', 'status' => 401]);
+                return response()->json(['message' => 'phone & Password does not match with our record.' ],401);
             }
             $user = User::where('phone', $request->phone)->first();
             $token = $user->createToken("API TOKEN")->plainTextToken;

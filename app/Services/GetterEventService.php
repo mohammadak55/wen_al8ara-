@@ -1,69 +1,73 @@
 <?php
 
 namespace App\Services;
+
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GetterEventService
 {
-    public function getAllEvents($page)
+    public function getAllEvents()
     {
-        $pageSize = 15;
-        $offset = ($page - 1) * $pageSize;
 
-        return DB::table('events')
+        $events = DB::table('events')
             ->join('regions', 'events.Region_id', '=', 'regions.id')
             ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id')
-            ->leftJoin('event_details', 'events.id', '=', 'event_details.event_id')
             ->select(
                 'events.id as id',
                 'events.subtitle as Subtitile',
                 'events.created_at as time',
+                'events.updated_at as updated_time',
                 'events.event_type as event_type',
                 'regions.regions',
                 'general_regions.general_regions as general_location',
-                DB::raw('IF(event_details.id IS NOT NULL, true, false) as has_event_details')
             )
-            ->orderBy('time', 'desc')
-            ->skip($offset)
-            ->take($pageSize)
+            ->orderByRaw('COALESCE(updated_time,time) DESC')
             ->get();
-    }
 
-    public function getEventDetail($page , $id)
-    {
-        $pageSize = 15;
-        $offset = ($page - 1) * $pageSize;
-        return DB::table("event_details")
-            ->join("events", "event_details.event_id", "=", "events.id")
-            ->join('regions', 'event_details.ExactLocation_id', '=', 'regions.id')
-            ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id')
-            ->where("event_id", $id )
-            ->select("event_details.created_at as time", "event_details.HumanCasualties as HumanCasualties", "event_details.description as description", "event_details.DamageType as DamageType", "events.event_type as event_type", 'regions.regions as location', "general_regions.general_regions as general_location")
-            ->skip($offset)
-            ->take($pageSize)
-            ->orderBy('time', 'desc')
-            ->get();
+        // Convert the created_at field to human-readable format
+        $events->transform(function ($event) {
+            $event->time = Carbon::parse($event->time)->diffForHumans();
+            $event->updated = $event->updated_time !== null;
+            $event->updated_time = $event->updated ? Carbon::parse($event->updated_time)->diffForHumans() : null;
+
+            return $event;
+        });
+
+        return $events;
     }
-    public function fillteredEevents($page, $regions=null , $eventType= null)
+    public function fillteredEevents( $regions = null, $eventType = null)
     {
-        $pageSize = 15;
-        $offset = ($page - 1) * $pageSize;
         $query =  DB::table('events')
             ->join('regions', 'events.Region_id', '=', 'regions.id')
             ->join('general_regions', 'regions.general_region_id', '=', 'general_regions.id');
-        if(!empty($eventType))
-        {
-            $query->where("event_type" , $eventType);
+        if (!empty($eventType)) {
+            $query->where("event_type", $eventType);
         }
-        if(!empty($regions))
-        {
+        if (!empty($regions)) {
             $query->where('regions.regions', $regions);
         }
 
-            return $query->select("events.id as id" , "events.subtitle as Subtitile", 'events.created_at as time', "events.event_type as event_type", 'regions.regions', "general_regions.general_regions as general_location")
-            ->orderBy('time', 'desc')
-            ->skip($offset)
-            ->take($pageSize)
+        $events = $query->select(
+            'events.id as id',
+            'events.subtitle as Subtitile',
+            'events.created_at as time',
+            'events.updated_at as updated_time',
+            'events.event_type as event_type',
+            'regions.regions',
+            'general_regions.general_regions as general_location',
+        )
+            ->orderByRaw('COALESCE(updated_time,time) DESC')
             ->get();
+
+            $events->transform(function ($event) {
+                $event->time = Carbon::parse($event->time)->diffForHumans();
+                $event->updated = $event->updated_time !== null;
+                $event->updated_time = $event->updated ? Carbon::parse($event->updated_time)->diffForHumans() : null;
+
+                return $event;
+            });
+
+        return $events;
     }
 }

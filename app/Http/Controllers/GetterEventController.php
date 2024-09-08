@@ -16,18 +16,9 @@ class GetterEventController extends Controller
     }
     public function showEvents(Request $request)
     {
-        $page = $request->query('page', 1);
-        $events = $this->eventService->getAllEvents($page);
+        $events = $this->eventService->getAllEvents();
 
         return response()->json(["events" => $events]);
-    }
-
-    public function showEventDetail(Request $request , $id)
-    {
-        $page = $request->query('page', 1);
-        $event = $this->eventService->getEventDetail($page , $id);
-
-        return response()->json(["detail" => $event]);
     }
     public function fillterEvent(Request $request, $regions = null, $eventType = null)
     {
@@ -41,13 +32,12 @@ class GetterEventController extends Controller
             );
 
             if ($validator->fails()) {
-                return response()->json(['error' => 'Invalid event type.'], 422);
+                return response()->json(['error' => 'نوع الحدث غير متاح '], 422);
             }
         }
-        $page = $request->query('page', 1);
-        $events = $this->eventService->fillteredEevents($page, $regions, $eventType);
+        $events = $this->eventService->fillteredEevents( $regions, $eventType);
         if ($events->isEmpty()) {
-            return response()->json(['message' => 'No event found with this region: ' . $regions], 404);
+            return response()->json(['message' => 'لا يوجد احداث بمنطقة ' . $regions], 404);
         } else {
             return response()->json(["events" => $events], 200);
         }
