@@ -23,6 +23,8 @@ class GeneralRegionsSeeder extends Seeder
             'الهرمل',
             'شمسطار',
             'البقاع الغربي',
+             "الحدود اللبنانية السورية",
+
         ];
 
         foreach ($generalRegions as $region) {
