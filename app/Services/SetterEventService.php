@@ -90,7 +90,7 @@ class SetterEventService
             $time = now()->format('H:i');
             $notificationData = [
                 'title' => 'تم التعديل على حدث ',
-                'body' => "تعديل"." : "."$message"."عند ال".$time,
+                'body' => "تعديل"." : "."$message"." عند ال " .$time,
                 'topic' => 'news',
             ];
             app(NotificationController::class)->sendNotificationToTopic($notificationData);
