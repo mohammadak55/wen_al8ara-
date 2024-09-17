@@ -20,10 +20,11 @@ class GetterEventController extends Controller
 
         return response()->json(["events" => $events]);
     }
-    public function fillterEvent(Request $request, $regions = null, $eventType = null)
+    public function fillterEvent(Request $request)
     {
         $allowedEventTypes = ["غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"];
-
+        $regions = $request->query('region');
+        $eventType = $request->query('eventType');
         // Validate the eventType
         if (!empty($eventType)) {
             $validator = Validator::make(
@@ -42,5 +43,5 @@ class GetterEventController extends Controller
             return response()->json(["events" => $events], 200);
         }
     }
-    public function validat($event) {}
+
 }

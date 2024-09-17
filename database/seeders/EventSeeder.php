@@ -11,7 +11,7 @@ class EventSeeder extends Seeder
     {
         $userId = 1; // Replace with the ID of the user you want to associate the events with
         $regionId = 25; // Replace with the ID of the region you want to associate the events with
-        $eventTypes = ["غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"];
+        $eventTypes = ["نفي الحدث" ,"غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"];
 
         $events = [];
         for ($i = 0; $i < 20000; $i++) {

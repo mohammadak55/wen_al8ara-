@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum(
                 "event_type",
-                ["غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"]
+                [ "نفي الحدث", "غارة من حربي", "جدار صوت", "تحليق طيران حربي", "تحليق مسيرة", "غارة من مسيرة", "قصف مدفعي", "اغتيال", "حرائق"]
             );
             $table->text("subtitle")->nullable();
             $table->foreignId("Region_id")->nullable()->constrained("regions");
